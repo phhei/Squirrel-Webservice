@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Greeting {
 
     private final long id;
@@ -16,6 +19,13 @@ public class Greeting {
 
     public String getContent() {
         return content;
+    }
+
+    public List<String> getList() {
+        List<String> r = new ArrayList<>(2);
+        r.add("ArrayList: ");
+        r.add(content);
+        return r;
     }
 
 }
