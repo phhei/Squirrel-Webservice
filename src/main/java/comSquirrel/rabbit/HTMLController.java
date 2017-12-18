@@ -16,8 +16,8 @@ public class HTMLController {
                 "</head>" +
                 "<body>" +
                 "<h1>Welcome :)</h1>" +
+                "<a href=\"./observer\">Observe the Frontier!</a><br>" +
                 "<img src=\"http://www.exterminatorstatenisland.com/large_image/squirrel/squirrel4.jpg\" />" +
-                "<a href=\"./observer\">Observe the Frontier!</a>" +
                 "</body>";
     }
 }
