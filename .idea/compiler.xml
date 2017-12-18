@@ -12,7 +12,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="SPRINGtest" target="1.9" />
-      <module name="Squirrel-Webservice" target="1.9" />
+      <module name="Squirrel-Webservice" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
