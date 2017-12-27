@@ -1,13 +1,12 @@
 package comSquirrel.rabbit;
 
 import com.SquirrelWebObject;
+import com.SquirrelWebObjectHelper;
 import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -61,9 +60,8 @@ public class RabbitMQList extends Thread {
 
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-                    throws IOException {
-                SquirrelWebObject o = SquirrelWebObjectClassLoader.convertBytesToObject(body);
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+                SquirrelWebObject o = SquirrelWebObjectHelper.convertToObject(body);
                 logger.debug("The consumer " + consumerTag + "received an SquirrelWebObject from the Frontier!");
                 dataQueue.add(o);
                 logger.trace("Added the new SquirrelWebObject to the dataQueue, contains " + dataQueue.size() + " SquirrelWebObjects now!");
@@ -96,12 +94,8 @@ public class RabbitMQList extends Thread {
         }
         return dataQueue.get(dataQueue.size()-1);
     }
-}
 
-abstract class SquirrelWebObjectClassLoader {
-    private static Logger logger = LoggerFactory.getLogger(SquirrelWebObjectClassLoader.class);
-
-    public static SquirrelWebObject convertBytesToObject(byte[] data) {
+ /*   private SquirrelWebObject convertBytesToObject(byte[] data) {
         try {
             Object obj = null;
             ByteArrayInputStream bis = null;
@@ -134,5 +128,5 @@ abstract class SquirrelWebObjectClassLoader {
             logger.warn("There was a converting error! Bytestream of length " + data.length + " has a wrong format/ is incomplete : " + e1.getMessage()+ ". Will return instead an empty WebSquirrelObject!", e1);
             return new SquirrelWebObject();
         }
-    }
+    }*/
 }
