@@ -14,6 +14,6 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
         listenerThread = new RabbitMQList();
-        listenerThread.start();
+        listenerThread.run();
     }
 }

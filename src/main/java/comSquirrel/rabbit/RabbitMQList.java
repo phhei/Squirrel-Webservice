@@ -11,52 +11,71 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitMQList extends Thread {
+public class RabbitMQList implements Runnable {
 
     private List<SquirrelWebObject> dataQueue = new ArrayList<>();
     private final static String QUEUE_NAME = "squirrel.web";
+    private Connection connection;
     private Channel channel;
 
     private Logger logger = LoggerFactory.getLogger(RabbitMQList.class);
 
-
-    @Override
-    public void start() {
-        try {
-            //wait until the rabbit is started in Docker
-            Thread.sleep(12000);
-        } catch (InterruptedException e) {
-            logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
-        }
+    private boolean rabbitConnect(int triesLeft) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbit");
-        Connection connection = null;
+        factory.setUsername("guest");
+        factory.setPassword("guest");
+        connection = null;
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
         } catch (IOException e) {
-            logger.error("Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
-            return;
+            if (triesLeft > 0) {
+                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                try {
+                    //wait until the rabbit is started in Docker
+                    Thread.sleep(5000);
+                } catch (InterruptedException ei) {
+                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
+                }
+                return rabbitConnect(triesLeft-1);
+            } else {
+                logger.error("0 tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                return false;
+            }
         } catch (TimeoutException e) {
-            logger.error("Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
-            return;
+            if (triesLeft > 0) {
+                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                try {
+                    //wait until the rabbit is started in Docker
+                    Thread.sleep(10000);
+                } catch (InterruptedException ei) {
+                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
+                }
+                return rabbitConnect(triesLeft-1);
+            } else {
+                logger.error("0 tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                return false;
+            }
         }
 
         logger.info("Connection to rabbit succeeded: " + factory.getHost() + " - " + connection.getClientProvidedName() + " [" + connection.getId() + "]");
-
-        try {
-            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        } catch (IOException e) {
-            logger.error("I have a connection to " + connection.getClientProvidedName() + " with the channel number " + channel.getChannelNumber() + ", but I was not able to declare a queue :(", e);
-            return;
-        }
-        logger.info("Queue declaration succeeded with the name " + QUEUE_NAME + " [" + channel.getChannelNumber() + "]");
+        return true;
     }
 
     @Override
     public void run() {
-        if (channel == null)
+        if (rabbitConnect(6)) {
+            try {
+                channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+            } catch (IOException e) {
+                logger.error("I have a connection to " + connection.getClientProvidedName() + " with the channel number " + channel.getChannelNumber() + ", but I was not able to declare a queue :(", e);
+                return;
+            }
+            logger.info("Queue declaration succeeded with the name " + QUEUE_NAME + " [" + channel.getChannelNumber() + "]");
+        } else {
             return;
+        }
 
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
@@ -76,7 +95,13 @@ public class RabbitMQList extends Thread {
             channel.basicConsume(QUEUE_NAME, true, consumer);
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
-            //TODO: implement retry's
+            try {
+               Thread.sleep(5000);
+            } catch (InterruptedException ei) {
+                ei.printStackTrace();
+                return;
+            }
+            run();
         }
     }
 
@@ -94,39 +119,4 @@ public class RabbitMQList extends Thread {
         }
         return dataQueue.get(dataQueue.size()-1);
     }
-
- /*   private SquirrelWebObject convertBytesToObject(byte[] data) {
-        try {
-            Object obj = null;
-            ByteArrayInputStream bis = null;
-            ObjectInputStream ois = null;
-            try {
-                bis = new ByteArrayInputStream(data);
-                ois = new ObjectInputStream(bis);
-                obj = ois.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-                if (bis != null) {
-                    try {
-                        bis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (ois != null) {
-                    try {
-                        ois.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }                }
-            }
-            return (SquirrelWebObject)obj;
-        } catch (ClassCastException e1) {
-            logger.warn("There was a converting error! Bytestream of length " + data.length + " has a wrong format/ is incomplete : " + e1.getMessage()+ ". Will return instead an empty WebSquirrelObject!", e1);
-            return new SquirrelWebObject();
-        }
-    }*/
 }
