@@ -1,10 +1,14 @@
-package comSquirrel.rabbit;
+package comSquirrel;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A simple HTML page...
+ * @author Philipp Heinisch
+ */
 @RestController
 public class HTMLController {
 

@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * The interface between the RabbitMQ and the Web-Service
+ * @author Philipp Heinisch
+ */
 public class RabbitMQList implements Runnable {
 
     private List<SquirrelWebObject> dataQueue = new ArrayList<>();

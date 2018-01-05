@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import comSquirrel.rabbit.RabbitMQList;
 
+/**
+ * The starting pount for the Web-Service
+ * @author Philipp Heinisch
+ */
 @SpringBootApplication
 public class Application {
 
