@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -117,10 +118,27 @@ public class RabbitMQList implements Runnable {
         logger.debug("THREAD: CLOSE END");
     }
 
-    public SquirrelWebObject getData() {
+    /**
+     * Gets the fetched data from the Frontier. Contains many information about the current crawling status and so on
+     * @return the latest {@link SquirrelWebObject}
+     */
+    public SquirrelWebObject getSquirrel() {
+        return getSquirrel(dataQueue.size()-1);
+    }
+
+    /**
+     * Gets the fetched data from the Frontier. Contains many information about the current crawling status and so on
+     * @param index All received {@link SquirrelWebObject} are stored in a list. Index {@code 0} is the oldest entry, Index {@code size-1} is the latest one
+     * @return the {@link SquirrelWebObject}
+     */
+    public SquirrelWebObject getSquirrel(int index) {
         if (dataQueue.isEmpty()) {
-            return null;
+            return new SquirrelWebObject();
         }
-        return dataQueue.get(dataQueue.size()-1);
+        try {
+            return dataQueue.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            return dataQueue.get(dataQueue.size()-1);
+        }
     }
 }

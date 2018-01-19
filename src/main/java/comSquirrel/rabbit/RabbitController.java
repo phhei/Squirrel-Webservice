@@ -8,15 +8,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 public class RabbitController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/observer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SquirrelWebObject observeFrontier() {
-        SquirrelWebObject o = Application.listenerThread.getData();
+    public SquirrelWebObject observeFrontier(@RequestParam(value="id", defaultValue="n/a") String property) {
+        SquirrelWebObject o;
+        try {
+            o = Application.listenerThread.getSquirrel(Integer.parseInt(property));
+        } catch (NumberFormatException e) {
+            o = Application.listenerThread.getSquirrel();
+        }
+
         if (o == null)
             return new SquirrelWebObject();
         return o;
