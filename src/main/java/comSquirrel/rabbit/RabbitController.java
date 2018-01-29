@@ -2,11 +2,15 @@ package comSquirrel.rabbit;
 
 import com.SquirrelWebObject;
 import comSquirrel.Application;
+import comSquirrel.Utilities.HTMLReader;
+import comSquirrel.Utilities.TemplateHelper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.*;
 
 @RestController
 public class RabbitController {
@@ -23,6 +27,28 @@ public class RabbitController {
         if (o == null)
             return new SquirrelWebObject();
         return o;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/observer/html", produces = MediaType.TEXT_HTML_VALUE)
+    public String observerFrontierHTML(@RequestParam(value="id", defaultValue="n/a") String property) {
+        SquirrelWebObject o = observeFrontier(property);
+
+        Map<String, List<String>> stringListMap = new HashMap<>();
+        stringListMap.put("numberPendingURIs", Collections.singletonList(o.getCountOfPendingURIs() + ""));
+        stringListMap.put("numberCrawledURIs", Collections.singletonList(o.getCountOfCrawledURIs() + ""));
+        stringListMap.put("numberWorker", Collections.singletonList(o.getCountOfWorker() + ""));
+        stringListMap.put("numberDeadWorker", Collections.singletonList(o.getCountOfDeadWorker() + ""));
+        stringListMap.put("pendingURIs", o.getPendingURIs());
+        stringListMap.put("nextCrawledURIs", o.getNextCrawledURIs());
+        List<String> IPURImap = new ArrayList<>(o.getIpStringListMap().size());
+        o.getIpStringListMap().forEach((k, v) -> {
+            StringBuilder vString = new StringBuilder(": ");
+            v.forEach(s -> vString.append(s + ", "));
+            IPURImap.add(k + vString.substring(0, vString.length()-2));
+        });
+        stringListMap.put("IPURImap", IPURImap);
+
+        return TemplateHelper.replace(HTMLReader.getText("./WEB-INF/pages/index.html"), stringListMap);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/observer/stat", produces = MediaType.TEXT_PLAIN_VALUE)

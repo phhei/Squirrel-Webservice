@@ -5,6 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import comSquirrel.rabbit.RabbitMQList;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * The starting pount for the Web-Service
  * @author Philipp Heinisch
