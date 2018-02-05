@@ -1,4 +1,4 @@
-package comSquirrel.Utilities;
+package com.squirrel.Utilities;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

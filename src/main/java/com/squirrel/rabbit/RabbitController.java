@@ -1,9 +1,9 @@
-package comSquirrel.rabbit;
+package com.squirrel.rabbit;
 
 import com.SquirrelWebObject;
-import comSquirrel.Application;
-import comSquirrel.Utilities.HTMLReader;
-import comSquirrel.Utilities.TemplateHelper;
+import com.squirrel.Application;
+import com.squirrel.Utilities.HTMLReader;
+import com.squirrel.Utilities.TemplateHelper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

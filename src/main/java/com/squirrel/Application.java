@@ -1,14 +1,9 @@
-package comSquirrel;
+package com.squirrel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import comSquirrel.rabbit.RabbitMQList;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import com.squirrel.rabbit.RabbitMQList;
 
 /**
  * The starting pount for the Web-Service

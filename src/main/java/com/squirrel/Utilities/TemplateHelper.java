@@ -1,4 +1,4 @@
-package comSquirrel.Utilities;
+package com.squirrel.Utilities;
 
 import java.util.List;
 import java.util.Map;

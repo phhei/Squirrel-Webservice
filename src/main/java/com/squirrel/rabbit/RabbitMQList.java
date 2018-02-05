@@ -1,4 +1,4 @@
-package comSquirrel.rabbit;
+package com.squirrel.rabbit;
 
 import com.SquirrelWebObject;
 import com.SquirrelWebObjectHelper;
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
