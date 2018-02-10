@@ -13,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * The interface between the RabbitMQ and the Web-Service
+ * Or better to say: Listener for the RabbitMQ - receives and organize the {@link SquirrelWebObject}s
  * @author Philipp Heinisch
  */
 public class RabbitMQList implements Runnable {
@@ -23,49 +24,6 @@ public class RabbitMQList implements Runnable {
     private Channel channel;
 
     private Logger logger = LoggerFactory.getLogger(RabbitMQList.class);
-
-    private boolean rabbitConnect(int triesLeft) {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("rabbit");
-        factory.setUsername("guest");
-        factory.setPassword("guest");
-        connection = null;
-        try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-        } catch (IOException e) {
-            if (triesLeft > 0) {
-                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
-                try {
-                    //wait until the rabbit is started in Docker
-                    Thread.sleep(5000);
-                } catch (InterruptedException ei) {
-                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
-                }
-                return rabbitConnect(triesLeft-1);
-            } else {
-                logger.error("0 tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
-                return false;
-            }
-        } catch (TimeoutException e) {
-            if (triesLeft > 0) {
-                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
-                try {
-                    //wait until the rabbit is started in Docker
-                    Thread.sleep(10000);
-                } catch (InterruptedException ei) {
-                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
-                }
-                return rabbitConnect(triesLeft-1);
-            } else {
-                logger.error("0 tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
-                return false;
-            }
-        }
-
-        logger.info("Connection to rabbit succeeded: " + factory.getHost() + " - " + connection.getClientProvidedName() + " [" + connection.getId() + "]");
-        return true;
-    }
 
     @Override
     public void run() {
@@ -109,6 +67,55 @@ public class RabbitMQList implements Runnable {
         }
     }
 
+    /**
+     * recursive function, that tries to connect with the rabbit container
+     *
+     * @param triesLeft the number of left tries. 5s are in between 2 tries
+     * @return {@code true}, if the connection to the RabbitMQ was established, otherwise {@code false}
+     */
+    private boolean rabbitConnect(int triesLeft) {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("rabbit");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
+        connection = null;
+        try {
+            connection = factory.newConnection();
+            channel = connection.createChannel();
+        } catch (IOException e) {
+            if (triesLeft > 0) {
+                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                try {
+                    //wait until the rabbit is started in Docker
+                    Thread.sleep(5000);
+                } catch (InterruptedException ei) {
+                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
+                }
+                return rabbitConnect(triesLeft - 1);
+            } else {
+                logger.error("0 tries left: Could not established a connection to the rabbit: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                return false;
+            }
+        } catch (TimeoutException e) {
+            if (triesLeft > 0) {
+                logger.warn(triesLeft + " tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                try {
+                    //wait until the rabbit is started in Docker
+                    Thread.sleep(10000);
+                } catch (InterruptedException ei) {
+                    logger.info("The waiting time for the rabbit was interrupted. Steo forward with trying to get a connection!");
+                }
+                return rabbitConnect(triesLeft - 1);
+            } else {
+                logger.error("0 tries left: Could not established a connection to the rabbit - TIMEOUT: no communication to rabbit :( [" + e.getMessage() + "]", e);
+                return false;
+            }
+        }
+
+        logger.info("Connection to rabbit succeeded: " + factory.getHost() + " - " + connection.getClientProvidedName() + " [" + connection.getId() + "]");
+        return true;
+    }
+
     public void close() throws IOException, TimeoutException {
         if (channel == null)
             return;
@@ -139,5 +146,14 @@ public class RabbitMQList implements Runnable {
         } catch (IndexOutOfBoundsException e) {
             return dataQueue.get(dataQueue.size()-1);
         }
+    }
+
+    /**
+     * Counts the number of {@link SquirrelWebObject}
+     *
+     * @return the number of {@link SquirrelWebObject}-objects, that were received from the WebService
+     */
+    public int countSquirrelWebObjects() {
+        return dataQueue.size();
     }
 }

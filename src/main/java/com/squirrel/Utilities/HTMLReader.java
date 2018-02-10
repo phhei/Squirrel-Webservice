@@ -8,7 +8,7 @@ import java.util.Collections;
 public abstract class HTMLReader {
 
     public static String getHTMLErrorPage(String errorMessage) {
-        return TemplateHelper.replace(getText("./WEB-INF/pages/exception.html"), Collections.singletonMap("error", Collections.singletonList(errorMessage)));
+        return TemplateHelper.replace(getText("./WEB-INF/pages/_exception.html"), Collections.singletonMap("error", Collections.singletonList(errorMessage)));
     }
 
     /**

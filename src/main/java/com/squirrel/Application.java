@@ -1,12 +1,11 @@
 package com.squirrel;
 
+import com.squirrel.rabbit.RabbitMQList;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.squirrel.rabbit.RabbitMQList;
-
 /**
- * The starting pount for the Web-Service
+ * The starting point for the Web-Service
  * @author Philipp Heinisch
  */
 @SpringBootApplication

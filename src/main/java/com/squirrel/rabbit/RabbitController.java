@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+/**
+ * Listener for the RabbitMQ - receives and organize the {@link SquirrelWebObject}s
+ *
+ * @author Philipp Heinisch
+ */
 @RestController
 public class RabbitController {
 
@@ -48,21 +53,23 @@ public class RabbitController {
         });
         stringListMap.put("IPURImap", IPURImap);
 
-        return TemplateHelper.replace(HTMLReader.getText("./WEB-INF/pages/index.html"), stringListMap);
+        return TemplateHelper.replace(HTMLReader.getText("./WEB-INF/pages/_index.html"), stringListMap);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/observer/stat", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String observeFrontierStat(@RequestParam(value="prop", defaultValue="World") String property) {
+    public String observeFrontierStat(@RequestParam(value = "prop", defaultValue = "help") String property) {
         StringBuilder ret = new StringBuilder();
         switch (property) {
             case "ls":
-                //TODO: dataQueue.forEach(c -> ret.append(c.toString()));
+                for (int i = 0; i < Application.listenerThread.countSquirrelWebObjects(); i++) {
+                    ret.append(Application.listenerThread.getSquirrel(i).toString() + System.lineSeparator());
+                }
                 break;
             case "lsc":
-                //TODO: ret.append("You have ").append(dataQueue.size()).append(" SquirrelWebObjects");
+                ret.append("You have ").append(Application.listenerThread.countSquirrelWebObjects()).append(" SquirrelWebObjects");
                 break;
             default:
-                ret.append("Please set another prop param");
+                ret.append("Please set another prop param: " + System.lineSeparator() + "- ls" + System.lineSeparator() + "- lsc");
                 break;
         }
 
