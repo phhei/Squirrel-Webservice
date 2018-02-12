@@ -56,25 +56,25 @@
               <tr>
                 <td>Number of pending URIs</td>
                 <td>
-                  <a><b>${numberPendingURIs}</b></a>
+                  <a><b>{{pendingURIs.length}}</b></a>
                 </td>
               </tr>
               <tr>
                 <td>Number of crawled URIs</td>
                 <td>
-                  <a><b>${numberCrawledURIs}</b></a>
+                  <a><b>{{nextCrawledURIs.length}}</b></a>
                 </td>
               </tr>
               <tr>
                 <td>Number of workers</td>
                 <td>
-                  <a><b>${numberWorker}</b></a>
+                  <a><b>{{countOfWorker}}</b></a>
                 </td>
               </tr>
               <tr>
                 <td>Number of dead workers</td>
                 <td>
-                  <a><b>${numberDeadWorker}</b></a>
+                  <a><b>{{countOfDeadWorker}}</b></a>
                 </td>
               </tr>
             </tbody> 
@@ -94,7 +94,13 @@
               </div>
               <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
-                  ${pendingURIs}
+                  <div class="panel-body">
+                    <ul ng-repeat="pURI in pendingURIs">
+                      <li>
+                        <a><b>{{pURI}}</b></a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -108,7 +114,13 @@
               </div>
               <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                 <div class="panel-body">
-                 ${nextCrawledURIs}
+                  <div class="panel-body">
+                    <ul ng-repeat="ncURIS in nextCrawledURIs">
+                      <li>
+                        <a><b>{{ncURIS}}</b></a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
