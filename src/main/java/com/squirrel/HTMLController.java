@@ -60,11 +60,11 @@ public class HTMLController {
     public String getStaticCode(Model model, HttpServletRequest request) {
         String path = "./WEB-INF" + request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 
-        File filepath = new File(path.substring(0, path.lastIndexOf('/')));
+        File filePath = new File(path.substring(0, path.lastIndexOf('/')));
 
-        if (filepath.isDirectory()) {
+        if (filePath.isDirectory()) {
             final String name = path.substring(path.lastIndexOf('/')+1, path.length());
-            Optional<File> searchedFile = Arrays.stream(filepath.listFiles()).filter(f -> f.getName().startsWith(name)).findFirst();
+            Optional<File> searchedFile = Arrays.stream(filePath.listFiles()).filter(f -> f.getName().startsWith(name)).findFirst();
             if(searchedFile.isPresent()) {
                 return HTMLReader.getText(searchedFile.get().getAbsolutePath());
             }
