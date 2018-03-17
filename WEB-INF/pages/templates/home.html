@@ -1,0 +1,102 @@
+<div class="container-fluid" ng-controller="homeCtrl">
+  <div class="row">
+    <div class="col-sm-5 main">
+      <div class="row placeholders">
+        <div class="col-xs-12 placeholder">
+          <img src="./images/1.png" width="200" height="200" alt="Generic placeholder thumbnail">
+          <h4>Frontier Observer</h4>
+        </div>
+      </div>
+
+      <table class="table">  
+        <tbody>
+          <tr>
+            <td>Number of pending URIs</td>
+            <td>
+              <a><b>{{pendingURIs}}</b></a>
+            </td>
+          </tr>
+          <tr>
+            <td>Number of crawled URIs</td>
+            <td>
+              <a><b>{{countOfCrawledURIs}}</b></a>
+            </td>
+          </tr>         
+          <tr>
+            <td>Number of workers</td>
+            <td>
+              <a><b>{{countOfWorker}}</b></a>
+            </td>
+          </tr>
+          <tr>
+            <td>Number of dead workers</td>
+            <td>
+              <a><b>{{countOfDeadWorker}}</b></a>
+            </td>
+          </tr>
+        </tbody> 
+      </table>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="autoUpdate"> Auto Update
+        </label>
+      </div>
+    </div>
+
+    <div class="col-sm-7 sidebar">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default panel-sidemenu">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <b style="color: #337ab7">PendingURIs</b>
+              </a>
+            </h4>            
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+              <ul ng-repeat="uri in PendingURIS">
+                <li>
+                  <a><b>{{uri}}</b></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default panel-sidemenu">
+          <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <b style="color: #337ab7">NextCrawledURIs</b>
+              </a>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+              <ul ng-repeat="ncURIS in NextCrawledURIs">
+                <li>
+                  <a><b>{{ncURIS}}</b></a>
+                </li>
+                </ul>              
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default panel-sidemenu">
+          <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <b style="color: #337ab7">CrawledURIs</b>
+              </a>
+            </h4>
+          </div>
+          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+              haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
