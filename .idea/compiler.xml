@@ -6,13 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SPRINGtest" />
-        <module name="Squirrel-Webservice" />
+        <module name="SPRINGWebSquirrelJar" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="SPRINGtest" target="1.9" />
-      <module name="Squirrel-Webservice" target="1.8" />
+      <module name="SPRINGWebSquirrelJar" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

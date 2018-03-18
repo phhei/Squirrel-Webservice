@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Squirrel-Webservice.iml" filepath="$PROJECT_DIR$/Squirrel-Webservice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SPRINGWebSquirrelJar.iml" filepath="$PROJECT_DIR$/SPRINGWebSquirrelJar.iml" />
     </modules>
   </component>
 </project>
