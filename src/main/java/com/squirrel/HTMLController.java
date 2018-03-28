@@ -24,20 +24,9 @@ public class HTMLController {
     /**
      * @return a HOME-page (just an HTML entry point)
      */
-    @RequestMapping(value = {"/","/home"}, produces = MediaType.TEXT_HTML_VALUE)
-    @ResponseBody
+    @RequestMapping(value = {"/","/home"}, produces = "text/html")
     public String index() {
-        return "<head>" +
-                "<title>Crawler Subgroup (Philipp and Waleed) presents</title>" +
-                "</head>" +
-                "<body>" +
-                "<h1>Welcome :)</h1>" +
-                "<ul>" +
-                "<li>Observe the <a href=\"./pages/index.html\">Frontier!</a> (<a href=\"./observer/html\">without Javascript</a>)</li>" +
-                "<li><a href=\"./observer\">Backbone</a> (<a href=\"./observer/stat\">&gt;&gt;</a>)</li>" +
-                "</ul>" +
-                "<img src=\"http://easyscienceforkids.com/wp-content/uploads/2013/04/squirrel-eating-nut.jpg\" />" +
-                "</body>";
+        return HTMLReader.getText("./WEB-INF/pages/index.html");
     }
 
     /**

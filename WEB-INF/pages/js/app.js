@@ -4,31 +4,31 @@ app.config(['$stateProvider', function($stateProvider) {
   var homeState = {
     name: 'home',
     url: '/home',
-    templateUrl: 'templates/home.html'
+    templateUrl: 'pages/templates/home.html'
   };
 
   var aboutState = {
     name: 'about',
     url: '/about',
-    templateUrl: 'templates/about.html'
+    templateUrl: 'pages/templates/about.html'
   };
 
   var factCheckState = {
     name: 'fact-check',
     url: '/fact-check',
-    templateUrl: 'templates/fact-check.html'
+    templateUrl: 'pages/templates/fact-check.html'
   };
 
   var crawlerState = {
     name: 'crawler',
     url: '/crawler',
-    templateUrl: 'templates/crawler.html'
+    templateUrl: 'pages/templates/crawler.html'
   };
 
   var squirrelState = {
     name: 'squirrel',
     url: '/squirrel',
-    templateUrl: 'templates/squirrel.html'
+    templateUrl: 'pages/templates/squirrel.html'
   };
 
   $stateProvider.state(homeState);
