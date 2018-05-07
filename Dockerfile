@@ -1,6 +1,6 @@
 # Dockerfile for building the Docker image for the Squirrel-Webservice
 FROM java:latest
-LABEL version="0.3.0"
+LABEL version="0.4.0"
 
 COPY ./ /etc/store
 

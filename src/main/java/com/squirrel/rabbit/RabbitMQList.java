@@ -2,10 +2,13 @@ package com.squirrel.rabbit;
 
 import com.SquirrelWebObject;
 import com.SquirrelWebObjectHelper;
+import com.graph.VisualisationGraph;
+import com.graph.VisualisationHelper;
 import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +16,15 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * The interface between the RabbitMQ and the Web-Service
- * Or better to say: Listener for the RabbitMQ - receives and organize the {@link SquirrelWebObject}s
+ * Or better to say: Listener for the RabbitMQ - receives and organize the {@link SquirrelWebObject}s and the {@link com.graph.VisualisationGraph}s
  * @author Philipp Heinisch
  */
 public class RabbitMQList implements Runnable {
 
     private List<SquirrelWebObject> dataQueue = new ArrayList<>();
-    private final static String QUEUE_NAME = "squirrel.web";
+    private List<VisualisationGraph> graphQueue = new ArrayList<>();
+    private final static String QUEUE_GENERAL_NAME = "squirrel.web";
+    private final static String QUEUE_GRAPH_NAME = "squirrel.web.graph";
     private Connection connection;
     private Channel channel;
 
@@ -27,19 +32,13 @@ public class RabbitMQList implements Runnable {
 
     @Override
     public void run() {
-        if (rabbitConnect(6)) {
-            try {
-                channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-            } catch (IOException e) {
-                logger.error("I have a connection to " + connection.getClientProvidedName() + " with the channel number " + channel.getChannelNumber() + ", but I was not able to declare a queue :(", e);
-                return;
-            }
-            logger.info("Queue declaration succeeded with the name " + QUEUE_NAME + " [" + channel.getChannelNumber() + "]");
-        } else {
+        if (!rabbitConnect(6) || !queueDeclare(QUEUE_GENERAL_NAME)) {
             return;
         }
 
-        Consumer consumer = new DefaultConsumer(channel) {
+        boolean listenToVisualizationGraphs = queueDeclare(QUEUE_GRAPH_NAME);
+
+        Consumer generalConsumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 SquirrelWebObject o = SquirrelWebObjectHelper.convertToObject(body);
@@ -48,13 +47,23 @@ public class RabbitMQList implements Runnable {
                 logger.trace("Added the new SquirrelWebObject to the dataQueue, contains " + dataQueue.size() + " SquirrelWebObjects now!");
             }
         };
+        Consumer graphConsumer = null;
+        if (listenToVisualizationGraphs) {
+            graphConsumer = new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+                    VisualisationGraph graph = VisualisationHelper.convertToObject(body);
+                    logger.debug("The consumer " + consumerTag + "received an VisualisationGraph from the Frontier!");
+                    graphQueue.add(graph);
+                    logger.trace("Added the new VisualisationGraph to the graphQueue, contains " + graphQueue.size() + " VisualisationGraphs now!");
+                }
+            };
+        }
         try {
-//            try {
-//                Thread.sleep(15000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            channel.basicConsume(QUEUE_NAME, true, consumer);
+            channel.basicConsume(QUEUE_GENERAL_NAME, true, generalConsumer);
+            if (listenToVisualizationGraphs) {
+                channel.basicConsume(QUEUE_GRAPH_NAME, true, graphConsumer);
+            }
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
             try {
@@ -65,6 +74,18 @@ public class RabbitMQList implements Runnable {
             }
             run();
         }
+    }
+
+    private boolean queueDeclare(String queueName) {
+        try {
+            channel.queueDeclare(queueName, false, false, false, null);
+        } catch (IOException e) {
+            logger.error("I have a connection to " + connection.getClientProvidedName() + " with the channel number " + channel.getChannelNumber() + ", but I was not able to declare a queue :(", e);
+            return false;
+        }
+        logger.info("Queue declaration succeeded with the name " + queueName + " [" + channel.getChannelNumber() + "]");
+
+        return true;
     }
 
     /**
@@ -138,13 +159,41 @@ public class RabbitMQList implements Runnable {
      * @return the {@link SquirrelWebObject}
      */
     public SquirrelWebObject getSquirrel(int index) {
-        if (dataQueue.isEmpty()) {
-            return new SquirrelWebObject();
+        SquirrelWebObject ret = getObject(dataQueue, index);
+        return (ret == null) ? new SquirrelWebObject() : ret;
+    }
+
+    /**
+     * Gets the fected crawled graph from Frontier.
+     * @return the latest {@link VisualisationGraph}
+     */
+    public VisualisationGraph getCrawledGraph() {
+        return getCrawledGraph(graphQueue.size() -1);
+    }
+
+    /**
+     * Gets the fected crawled graph from Frontier.
+     * @param index All received {@link VisualisationGraph} are stored in a list. Index {@code 0} is the oldest entry, Index {@code size-1} is the latest one
+     * @return the {@link VisualisationGraph}
+     */
+    public VisualisationGraph getCrawledGraph(int index) {
+        VisualisationGraph ret = getObject(graphQueue, index);
+        if (ret == null) {
+            ret = new VisualisationGraph();
+            ret.addNode("No Graph available").setColor(Color.RED);
+        }
+
+        return ret;
+    }
+
+    private<T> T getObject(List<T> list, int index) {
+        if (list.isEmpty()) {
+            return null;
         }
         try {
-            return dataQueue.get(index);
+            return list.get(index);
         } catch (IndexOutOfBoundsException e) {
-            return dataQueue.get(dataQueue.size()-1);
+            return list.get(dataQueue.size()-1);
         }
     }
 

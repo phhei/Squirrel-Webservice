@@ -1,6 +1,7 @@
 package com.squirrel.rabbit;
 
 import com.SquirrelWebObject;
+import com.graph.VisualisationGraph;
 import com.squirrel.Application;
 import com.squirrel.Utilities.HTMLReader;
 import com.squirrel.Utilities.TemplateHelper;
@@ -74,5 +75,20 @@ public class RabbitController {
         }
 
         return ret.toString();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/observer/crawledGraph", produces = MediaType.APPLICATION_JSON_VALUE)
+    public VisualisationGraph observeCrawledGraph(@RequestParam(value="id", defaultValue="n/a") String property) {
+        VisualisationGraph graph;
+        try {
+            graph = Application.listenerThread.getCrawledGraph(Integer.parseInt(property));
+        } catch (NumberFormatException e) {
+            graph = Application.listenerThread.getCrawledGraph();
+        }
+
+        if (graph == null)
+            return new VisualisationGraph();
+
+        return graph;
     }
 }

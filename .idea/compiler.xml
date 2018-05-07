@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="SPRINGWebSquirrelJar" />
+        <module name="Squirrel-Webservice" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="SPRINGWebSquirrelJar" target="1.8" />
+      <module name="Squirrel-Webservice" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
