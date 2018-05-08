@@ -6,7 +6,7 @@
 
     <groupId>org.aksw.simba.squirrel</groupId>
     <artifactId>SPRINGWebSquirrel</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.aksw.simba.squirrel</groupId>
             <artifactId>SquirrelWebObject</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
