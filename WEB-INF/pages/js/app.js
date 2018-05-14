@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ui.router']);
+var app = angular.module('app', [ 'ngMaterial', 'ngMessages', 'material.svgAssetsCache','ui.router']);
 
 app.config(['$stateProvider', function($stateProvider) {
   var homeState = {
@@ -38,7 +38,7 @@ app.config(['$stateProvider', function($stateProvider) {
   $stateProvider.state(squirrelState);
 }]);
 
-app.config(['$urlRouterProvider', function($urlRouterProvider) {  
+app.config(['$urlRouterProvider', function($urlRouterProvider) {
   $urlRouterProvider.when('', '/home');
   $urlRouterProvider.otherwise('/home');
 }])
