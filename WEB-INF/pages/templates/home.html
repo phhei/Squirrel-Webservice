@@ -94,7 +94,54 @@
             <div class="panel-body">
               haven't heard of them accusamus labore sustainable VHS.
             </div>
-          </div>
+          </div><br>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td><b style="color: #337ab7">TotalUrls</b></td>
+                        <td>
+                            <a><b>{{totalUrls}}</b></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b style="color: #337ab7">RuntimeInSeconds</b></td>
+                        <td>
+                            <a><b>{{runtimeInSeconds}}</b></a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b style="color: #337ab7">ReadTime</b></td>
+                        <td>
+                            <a><b>{{readTime}}</b></a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b style="color: #337ab7">WriteTime</b></td>
+                        <td>
+                            <a><b>{{writeTime}}</b></a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b style="color: #337ab7">IpStringListMap</b></td>
+                        <td>
+                            <a><b>{{ipStringListMap}}</b></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            <md-slider-container>
+                <label><b style="color: #337ab7">History Slider</b></label>
+                <md-slider  ng-model="inputValue" ng-click="searchQuery()" aria-label="red" id="red-slider" class="md-warn">
+                </md-slider>
+                    <!--<md-input-container>-->
+                        <!--<lable>{{inputValue}}</lable>-->
+                    <!--</md-input-container>-->
+            </md-slider-container>
+
         </div>
       </div>
     </div>

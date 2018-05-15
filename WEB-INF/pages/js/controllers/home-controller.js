@@ -1,6 +1,24 @@
 app.controller('homeCtrl', ['$scope', '$http', function($scope, $http) {
-  
+
   $scope.autoUpdate = true;
+  $scope.searchQuery = 'query';
+
+  $scope.searchQuery = function () {
+      $http({
+          method : "GET",
+          url : "/observer/inputValue"
+      }).then(function mySuccess(response) {
+          $scope.totalURIS = response.data.totalURIS;
+          $scope.runtimeInSeconds = response.data.runtimeInSeconds;
+          $scope.readTime = response.data.readTime;
+          $scope.writeTime = response.data.writeTime;
+          $scope.ipStringListMap = response.data.ipStringListMap;
+
+      }, function myError(response) {
+          console.log(response);
+      });
+  }
+
 
   $scope.getData = function() {
     if ($scope.autoUpdate) {
@@ -24,7 +42,14 @@ app.controller('homeCtrl', ['$scope', '$http', function($scope, $http) {
     }
   };
 
-  $scope.getData();
+    $scope.get1 = function() {
+        console.log("get1 called.");
+    };
+
+    $scope.get1();
+    $scope.searchQuery();
+    $scope.getData();
+
 
   setInterval($scope.getData, 5000);
 }]);
