@@ -8,6 +8,7 @@ import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class RabbitMQList implements Runnable {
 
     private Logger logger = LoggerFactory.getLogger(RabbitMQList.class);
 
+    private final static int MAXLENGTHOFHISTORY = 10000;
+
     @Override
     public void run() {
         if (!rabbitConnect(6) || !queueDeclare(QUEUE_GENERAL_NAME)) {
@@ -43,7 +46,7 @@ public class RabbitMQList implements Runnable {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 SquirrelWebObject o = SquirrelWebObjectHelper.convertToObject(body);
                 logger.debug("The consumer " + consumerTag + "received an SquirrelWebObject from the Frontier!");
-                dataQueue.add(o);
+                addElementToLimitedList(dataQueue, o);
                 logger.trace("Added the new SquirrelWebObject to the dataQueue, contains " + dataQueue.size() + " SquirrelWebObjects now!");
             }
         };
@@ -54,7 +57,7 @@ public class RabbitMQList implements Runnable {
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                     VisualisationGraph graph = VisualisationHelper.convertToObject(body);
                     logger.debug("The consumer " + consumerTag + "received an VisualisationGraph from the Frontier!");
-                    graphQueue.add(graph);
+                    addElementToLimitedList(graphQueue, graph);
                     logger.trace("Added the new VisualisationGraph to the graphQueue, contains " + graphQueue.size() + " VisualisationGraphs now!");
                 }
             };
@@ -204,5 +207,26 @@ public class RabbitMQList implements Runnable {
      */
     public int countSquirrelWebObjects() {
         return dataQueue.size();
+    }
+
+    /**
+     * Adds a element to a {@link List}, but checks in addition before, if a certain size limit (MAXLENGTHOFHISTORY) is reached. If yes, the method truncates every second element from the list.
+     * <b>Attention:</b> if the list is bigger than MAXLENGTHOFHISTORY*2, then the truncate procedure will execute multiple times.
+     * @param list the {@link List}, in that the element should be added. Must not be null.
+     * @param insertedElement the element, that should be added Must not be null.
+     * @param <T> this method is generic
+     */
+    private <T> void addElementToLimitedList(@NotNull List<T> list, @NotNull T insertedElement) {
+        while (list.size() >= MAXLENGTHOFHISTORY) {
+            List<T> toBeDeleted = new ArrayList<>(MAXLENGTHOFHISTORY >> 1);
+            for (int i = 0; i < list.size(); i++) {
+                if (i%2 == 1) {
+                    toBeDeleted.add(list.get(i));
+                }
+            }
+            list.removeAll(toBeDeleted);
+        }
+
+        list.add(insertedElement);
     }
 }
