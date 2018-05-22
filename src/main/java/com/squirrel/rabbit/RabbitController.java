@@ -67,7 +67,7 @@ public class RabbitController {
                 }
                 break;
             case "lsc":
-                ret.append("You have ").append(Application.listenerThread.countSquirrelWebObjects()).append(" SquirrelWebObjects");
+                ret.append(Application.listenerThread.countSquirrelWebObjects());
                 break;
             default:
                 ret.append("Please set another prop param: " + System.lineSeparator() + "- ls" + System.lineSeparator() + "- lsc");
