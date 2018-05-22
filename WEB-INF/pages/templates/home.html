@@ -92,7 +92,7 @@
           </div>
           <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <div class="panel-body">
-              haven't heard of them accusamus labore sustainable VHS.
+                <b class="ng-binding">I’m sorry,there are no Crawled URIs ;'(.</b>
             </div>
           </div><br>
                 <table class="table">
@@ -135,7 +135,7 @@
 
             <md-slider-container>
                 <label><b style="color: #337ab7">History Slider</b></label>
-                <md-slider  ng-model="inputValue" ng-click="searchQuery()" aria-label="red" id="red-slider" class="md-warn">
+                <md-slider md-invert min="0" ng-change="onSliderChange()"  ng-model="slider" ng-click="searchQuery()" aria-label="red" id="red-slider" class="md-warn">
                 </md-slider>
                     <!--<md-input-container>-->
                         <!--<lable>{{inputValue}}</lable>-->
