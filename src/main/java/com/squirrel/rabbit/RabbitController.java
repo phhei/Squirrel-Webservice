@@ -22,10 +22,11 @@ import java.util.*;
 public class RabbitController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/observer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SquirrelWebObject observeFrontier(@RequestParam(value="id", defaultValue="n/a") String property) {
+    public SquirrelWebObject observeFrontier(@RequestParam(value="id", defaultValue="n/a") String property, @RequestParam(value = "percent", defaultValue = "false") String percent) {
         SquirrelWebObject o;
         try {
-            o = Application.listenerThread.getSquirrel(Integer.parseInt(property));
+            int id = Boolean.parseBoolean(percent) ? (int) (Integer.parseInt(property)/100f)*Application.listenerThread.countSquirrelWebObjects() : Integer.parseInt(property);
+            o = Application.listenerThread.getSquirrel(id);
         } catch (NumberFormatException e) {
             o = Application.listenerThread.getSquirrel();
         }
@@ -36,8 +37,8 @@ public class RabbitController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/observer/html", produces = MediaType.TEXT_HTML_VALUE)
-    public String observerFrontierHTML(@RequestParam(value="id", defaultValue="n/a") String property) {
-        SquirrelWebObject o = observeFrontier(property);
+    public String observerFrontierHTML(@RequestParam(value="id", defaultValue="n/a") String property, @RequestParam(value = "percent", defaultValue = "false") String percent) {
+        SquirrelWebObject o = observeFrontier(property, percent);
 
         Map<String, List<String>> stringListMap = new HashMap<>();
         stringListMap.put("numberPendingURIs", Collections.singletonList(o.getCountOfPendingURIs() + ""));
@@ -67,7 +68,8 @@ public class RabbitController {
                 }
                 break;
             case "lsc":
-                ret.append(Application.listenerThread.countSquirrelWebObjects());
+                //ret.append(Application.listenerThread.countSquirrelWebObjects());
+                ret.append(2);
                 break;
             default:
                 ret.append("Please set another prop param: " + System.lineSeparator() + "- ls" + System.lineSeparator() + "- lsc");

@@ -41,4 +41,4 @@ app.config(['$stateProvider', function($stateProvider) {
 app.config(['$urlRouterProvider', function($urlRouterProvider) {
   $urlRouterProvider.when('', '/home');
   $urlRouterProvider.otherwise('/home');
-}])
+}]);
